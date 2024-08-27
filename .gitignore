@@ -12,7 +12,7 @@ tarballs/
 test-results/
 
 # dotnet
-wwwroot
+wwwroot/*
 appsettings.json
 *.db
 

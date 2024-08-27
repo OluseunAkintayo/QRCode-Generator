@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using QRC.Services;
-using QRC.Models.QRCodes;
+using QRC.Models.QRCodeModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QRC.Controllers;
 
@@ -12,7 +13,7 @@ public class QrController : ControllerBase {
     qrService = _qrService;
   }
 
-  [HttpPost("new", Name = "NewQrCode")]
+  [HttpPost("new", Name = "NewQrCode"), Authorize]
 	[ProducesResponseType(StatusCodes.Status201Created)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
   public IActionResult NewQrCode([FromBody] QrCodeDto qrCodeDto) {
@@ -22,7 +23,15 @@ public class QrController : ControllerBase {
   }
 
 
-  [HttpGet("list", Name = "GetQrCodes")]
+  [HttpGet("get-current-user", Name = "GetCurrentUser"), Authorize]
+  [ProducesResponseType(StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
+  public IActionResult GetCurrentUser() {
+    var res = qrService.GetCurrentUser();
+    return Ok(res);
+  }
+  
+  [HttpGet("list", Name = "GetQrCodes"), Authorize]
   [ProducesResponseType(StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
   public IActionResult GetQrCodes() {
@@ -31,7 +40,7 @@ public class QrController : ControllerBase {
     return Ok(res);
   }
 
-  [HttpDelete(Name = "DeleteQrCode")]
+  [HttpDelete(Name = "DeleteQrCode"), Authorize(Roles = "Admin")]
   [ProducesResponseType(StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
   public IActionResult DeleteQrCode(Guid Id) {

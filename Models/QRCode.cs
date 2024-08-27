@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace QRC.Models.QRCodes;
+namespace QRC.Models.QRCodeModel;
 
 [Index(nameof(UrlId), IsUnique = true)]
 

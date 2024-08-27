@@ -1,6 +1,7 @@
-using QRC.Models.QRCodes;
 using QRCoder;
 using NanoidDotNet;
+using System.Security.Claims;
+using QRC.Models.QRCodeModel;
 
 namespace QRC.Services;
 
@@ -15,17 +16,17 @@ public class QrService {
   }
 
   public QrCodeResponse NewQrCode(QrCodeDto qrCodeDto) {
+    QrCodeResponse response = new();
+
+    var user = GetCurrentUser();
+    if(user == null) {
+      response.Success = false;
+      response.Message = "User cannot be null";
+      return response;
+    }
+
     var request = httpContextAccessor.HttpContext.Request;
     string id = Nanoid.Generate(Nanoid.Alphabets.LowercaseLettersAndDigits, 10);
-    QrCodeModel qrCode = new() {
-      Title = qrCodeDto.Title,
-      VisitCount = 0,
-      CreatedAt = DateTime.UtcNow,
-      IsActive = true,
-      SiteUrl = qrCodeDto.SiteUrl,
-      UrlId = id
-    };
-
     string dirPath = Path.Combine(webHostEnvironment.WebRootPath, "img/");
     if(!Path.Exists(dirPath)) Directory.CreateDirectory(dirPath);
     string partialFilePath = "img/" + Guid.NewGuid().ToString() + ".png";
@@ -41,54 +42,65 @@ public class QrService {
     
     // string imgUrl = $"data:image/{imgFormat.ToString().ToLower()};base64,{qrCodeImage}";
     string fileUri = $"{request.Scheme}://{request.Host}/{partialFilePath}";
-    qrCode.ImageUrl = fileUri;
-
-    // db.QrCodes.Add(qrCode);
-    // db.SaveChanges();
-
-    QrCodeResponse response = new() {
-      Success = true,
-      Data = qrCode,
-      Message = "Item created successfully"
+    QrCodeModel qrCode = new() {
+      Title = qrCodeDto.Title,
+      VisitCount = 0,
+      CreatedAt = DateTime.UtcNow,
+      IsActive = true,
+      SiteUrl = qrCodeDto.SiteUrl,
+      UrlId = id,
+      CreatedBy = Guid.Parse(user),
+      ImageUrl = fileUri
     };
+
+    db.QrCodes.Add(qrCode);
+    db.SaveChanges();
+    
+    response.Success = true;
+    response.Data = qrCode;
+    response.Message = "Item created successfully";
     return response;
   }
 
   public QrCodeListResponse GetQrCodes() {
+    QrCodeListResponse response = new();
     var codes = db.QrCodes.ToList();
     if(codes == null) {
-      QrCodeListResponse error = new() {
-        Success = false,
-        Message = "Error retrieving items"
-      };
-      return error;
+      response.Success = false;
+      response.Message = "Error retrieving items";
+      return response;
     }
 
-    QrCodeListResponse response = new() {
-      Success = true,
-      Data = codes,
-      Message = "Item created successfully"
-    };
+    response.Success = true;
+    response.Data = codes;
+    response.Message = "Item created successfully";
     return response;
   }
 
   public QrCodeResponse DeleteQrCode(Guid Id) {
+    QrCodeResponse response = new();
     var code = db.QrCodes.Find(Id);
     if(code == null) {
-      QrCodeResponse error = new() {
-        Success = false,
-        Message = "Error retrieving item"
-      };
-      return error;
+      response.Success = false;
+      response.Message = "Error retrieving item";
+      return response;
     }
 
     db.QrCodes.Remove(code);
     db.SaveChanges();
 
-    QrCodeResponse response = new() {
-      Success = true,
-      Message = "Item deleted successfully"
-    };
+    response.Success = true;
+    response.Message = "Item deleted successfully";
     return response;
+  }
+
+  public string? GetCurrentUser() {
+    var user = httpContextAccessor.HttpContext.User;
+    if (user.Identity is not ClaimsIdentity identity) {
+      return null;
+    };
+    var claims = identity.Claims;
+    string UserId = claims.FirstOrDefault(u => u.Type == "UserId")?.Value;
+    return UserId;
   }
 }

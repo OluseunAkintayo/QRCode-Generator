@@ -85,6 +85,4 @@ public class AuthService {
     };
     return tokenResponse;
   }
-
 }
-
