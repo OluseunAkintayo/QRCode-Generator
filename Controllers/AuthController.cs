@@ -6,9 +6,9 @@ namespace QRC.Controllers;
 
 [ApiController]
 [Route("auth")]
-public class UserController : ControllerBase {
+public class AuthController : ControllerBase {
 	private readonly AuthService authService;
-  public UserController(AuthService _authService) {
+  public AuthController(AuthService _authService) {
     authService = _authService;
   }
 
@@ -33,5 +33,14 @@ public class UserController : ControllerBase {
     return Ok(res);
   }
 
+  // [HttpDelete("user/delete", Name = "Delete")]
+	// [ProducesResponseType(StatusCodes.Status200OK)]
+	// [ProducesResponseType(StatusCodes.Status400BadRequest)]
+	// [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+  // public IActionResult Delete(Guid userId) {
+  //   var res = authService.Login(user);
+  //   if(!res.Success) return BadRequest(res);
+  //   return Ok(res);
+  // }
 }
 

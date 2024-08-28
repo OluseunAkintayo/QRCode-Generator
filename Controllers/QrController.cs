@@ -23,6 +23,16 @@ public class QrController : ControllerBase {
   }
 
 
+  [HttpGet("scan", Name = "ScanQrCode")]
+	[ProducesResponseType(StatusCodes.Status201Created)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+  public IActionResult ScanQrCode(string Id) {
+    var res = qrService.ScanQrCode(Id);
+    if(!res.Success) return BadRequest(res);
+    return Ok(res);
+  }
+
+
   [HttpGet("get-current-user", Name = "GetCurrentUser"), Authorize]
   [ProducesResponseType(StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -31,7 +41,7 @@ public class QrController : ControllerBase {
     return Ok(res);
   }
   
-  [HttpGet("list", Name = "GetQrCodes"), Authorize]
+  [HttpGet("list", Name = "GetQrCodes")]
   [ProducesResponseType(StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
   public IActionResult GetQrCodes() {

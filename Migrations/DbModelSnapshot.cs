@@ -17,7 +17,7 @@ namespace QRC.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.20");
 
-            modelBuilder.Entity("QRC.Models.QRCodes.QrCodeModel", b =>
+            modelBuilder.Entity("QRC.Models.QRCodeModel.QrCodeModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

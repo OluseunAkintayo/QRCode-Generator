@@ -27,13 +27,15 @@ public class QrService {
 
     var request = httpContextAccessor.HttpContext.Request;
     string id = Nanoid.Generate(Nanoid.Alphabets.LowercaseLettersAndDigits, 10);
+
     string dirPath = Path.Combine(webHostEnvironment.WebRootPath, "img/");
     if(!Path.Exists(dirPath)) Directory.CreateDirectory(dirPath);
     string partialFilePath = "img/" + Guid.NewGuid().ToString() + ".png";
     string filePath = Path.Combine(webHostEnvironment.WebRootPath, partialFilePath);
+    string url = $"https://michaelson-qr-code-generator.vercel.app/scan?url-id={id}";
     // var imgFormat = Base64QRCode.ImageType.Png;
     QRCodeGenerator qRCodeGenerator = new();
-    QRCodeData qrCodeData = qRCodeGenerator.CreateQrCode(qrCodeDto.SiteUrl, QRCodeGenerator.ECCLevel.Q);
+    QRCodeData qrCodeData = qRCodeGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
     Base64QRCode base64QRCode = new(qrCodeData);
     
     string qrCodeImage = base64QRCode.GetGraphic(20);
@@ -76,6 +78,31 @@ public class QrService {
     response.Message = "Item created successfully";
     return response;
   }
+
+  public QRScanResponse ScanQrCode(string urlId) {
+    QRScanResponse response = new();
+    var code = db.QrCodes.FirstOrDefault(item => item.UrlId == urlId);
+    if(code == null) {
+      response.Success = false;
+      response.Message = "Item not found";
+      return response;
+    }
+
+    if(!code.IsActive) {
+      response.Success = false;
+      response.Message = "This QR Code has been deactivated";
+      return response;
+    }
+
+    code.VisitCount = code.VisitCount + 1;
+    db.SaveChanges();
+
+    response.Success = true;
+    response.Message = "Success!";
+    response.Url = code.SiteUrl;
+    return response;
+  }
+
 
   public QrCodeResponse DeleteQrCode(Guid Id) {
     QrCodeResponse response = new();

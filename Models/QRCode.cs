@@ -23,9 +23,7 @@ public class QrCodeModel {
 
 public class QrCodeDto {
   public string Title { get; set; } = string.Empty;
-  public string ImageUrl { get; set; } = string.Empty;
   public string SiteUrl { get; set; } = string.Empty;
-  public Guid CreatedBy { get; set; }
 }
 
 
@@ -46,3 +44,10 @@ public class QrCodeResponse {
   public string Message { get; set; } = string.Empty;
   public QrCodeModel? Data { get; set; }
 }
+
+public class QRScanResponse {
+  public bool Success { get; set; }
+  public string Message { get; set; } = string.Empty;
+  public string Url { get; set; } = string.Empty;
+}
+

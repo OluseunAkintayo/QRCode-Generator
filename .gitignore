@@ -12,9 +12,7 @@ tarballs/
 test-results/
 
 # dotnet
-wwwroot/*
-appsettings.json
-*.db
+
 
 
 # Mac bundle stuff

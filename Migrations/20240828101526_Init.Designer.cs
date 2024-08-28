@@ -11,8 +11,8 @@ using QRC.Services;
 namespace QRC.Migrations
 {
     [DbContext(typeof(Db))]
-    [Migration("20240827141342_ModifiedUserTable")]
-    partial class ModifiedUserTable
+    [Migration("20240828101526_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,7 @@ namespace QRC.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.20");
 
-            modelBuilder.Entity("QRC.Models.QRCodes.QrCodeModel", b =>
+            modelBuilder.Entity("QRC.Models.QRCodeModel.QrCodeModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
