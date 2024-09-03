@@ -8,8 +8,10 @@ namespace QRC.Controllers;
 [Route("auth")]
 public class AuthController : ControllerBase {
 	private readonly AuthService authService;
-  public AuthController(AuthService _authService) {
+  private readonly ILogger<AuthController> logger;
+  public AuthController(AuthService _authService, ILogger<AuthController> _logger) {
     authService = _authService;
+    logger = _logger;
   }
 
   [HttpPost("user/signup", Name = "Signup")]

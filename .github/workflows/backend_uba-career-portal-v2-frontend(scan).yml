@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: echo ${{ env.Nexus }}
+      - run: echo "Work begins here..."
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
@@ -34,7 +34,8 @@ jobs:
         
       - name: Apply database migrations
         run: dotnet ef database update
-        # env: ConnectionString: ${{ secrets.NEXUS }}
+        env: 
+          ConnectionString: ${{ secrets.AZUREAPPSERVICE_NEXUS }}
       
       - name: Restore dependencies
         run: dotnet restore
