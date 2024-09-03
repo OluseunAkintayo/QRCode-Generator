@@ -34,7 +34,7 @@ jobs:
         
       - name: Apply database migrations
         run: dotnet ef database update
-        env: ConnectionString: ${{ secrets.NEXUS }}
+        # env: ConnectionString: ${{ secrets.NEXUS }}
       
       - name: Restore dependencies
         run: dotnet restore
