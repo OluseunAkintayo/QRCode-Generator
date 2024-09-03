@@ -25,7 +25,7 @@ public class QrService {
       return response;
     }
 
-    var request = httpContextAccessor.HttpContext.Request;
+    var request = httpContextAccessor.HttpContext?.Request;
     string id = Nanoid.Generate(Nanoid.Alphabets.LowercaseLettersAndDigits, 10);
 
     string dirPath = Path.Combine(webHostEnvironment.WebRootPath, "img/");
@@ -43,7 +43,7 @@ public class QrService {
     File.WriteAllBytes(filePath, imgBytes);
     
     // string imgUrl = $"data:image/{imgFormat.ToString().ToLower()};base64,{qrCodeImage}";
-    string fileUri = $"{request.Scheme}://{request.Host}/{partialFilePath}";
+    string fileUri = $"{request?.Scheme}://{request?.Host}/{partialFilePath}";
     QrCodeModel qrCode = new() {
       Title = qrCodeDto.Title,
       VisitCount = 0,
@@ -122,8 +122,8 @@ public class QrService {
   }
 
   public string? GetCurrentUser() {
-    var user = httpContextAccessor.HttpContext.User;
-    if (user.Identity is not ClaimsIdentity identity) {
+    var user = httpContextAccessor?.HttpContext?.User;
+    if (user?.Identity is not ClaimsIdentity identity) {
       return null;
     };
     var claims = identity.Claims;

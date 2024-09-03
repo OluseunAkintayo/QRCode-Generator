@@ -15,7 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<Db>(options => {
-  options.UseNpgsql(builder.Configuration.GetConnectionString("Database"));
+  options.UseSqlite(builder.Configuration.GetConnectionString("Nexus"));
 });
 
 builder.Services.AddSwaggerGen(options => {

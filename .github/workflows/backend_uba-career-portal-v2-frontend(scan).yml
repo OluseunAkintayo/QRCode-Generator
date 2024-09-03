@@ -20,9 +20,22 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '7.x'
+      
+      - name: Install dotnet-ef tool  
+        run: dotnet tool install --global dotnet-ef
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
+      
+      - name: Test 
+        run: dotnet test --no-build --verbosity normal
+        
+      - name: Apply database migrations
+        run: dotnet ef database update
+        env: ConnectionString: ${{ secrets.Nexus }}
+      
+      - name: Restore dependencies
+        run: dotnet restore
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
