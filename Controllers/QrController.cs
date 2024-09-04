@@ -12,7 +12,7 @@ public class QrController : ControllerBase {
   public QrController(QrService _qrService) {
     qrService = _qrService;
   }
-
+ 
   [HttpPost("new", Name = "NewQrCode"), Authorize]
 	[ProducesResponseType(StatusCodes.Status201Created)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
