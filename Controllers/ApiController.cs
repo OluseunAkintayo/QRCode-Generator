@@ -14,7 +14,7 @@ public class ApiController : ControllerBase {
 	[ProducesResponseType(StatusCodes.Status201Created)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-  public IActionResult Signup() {
+  public IActionResult Test() {
     var setting = configuration.GetConnectionString("Nexus");
     var res = new {
       Success = true,

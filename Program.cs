@@ -66,6 +66,11 @@ builder.Services.AddTransient<AuthService>();
 
 var app = builder.Build();
 
+using (var scope  = app.Services.CreateScope()) {
+  var dbContext = scope.ServiceProvider.GetRequiredService<Db>();
+  dbContext.Database.Migrate();
+}
+
 app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.

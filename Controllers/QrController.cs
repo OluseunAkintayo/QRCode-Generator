@@ -29,7 +29,8 @@ public class QrController : ControllerBase {
   public IActionResult ScanQrCode(string Id) {
     var res = qrService.ScanQrCode(Id);
     if(!res.Success) return BadRequest(res);
-    return Ok(res);
+    // return Ok(res);
+    return Redirect(res.Url);
   }
 
 
