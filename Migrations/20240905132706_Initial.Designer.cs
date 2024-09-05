@@ -11,8 +11,8 @@ using QRC.Services;
 namespace QRC.Migrations
 {
     [DbContext(typeof(Db))]
-    [Migration("20240903153307_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20240905132706_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
