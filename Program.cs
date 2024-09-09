@@ -22,7 +22,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<Db>(options => {
+builder.Services.AddDbContext<DbService>(options => {
   options.UseSqlite(builder.Configuration.GetConnectionString("Nexus"));
 });
 
@@ -60,16 +60,16 @@ builder.Services.AddCors(options => {
 });
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddTransient<Db>();
+builder.Services.AddTransient<DbService>();
 builder.Services.AddTransient<QrService>();
 builder.Services.AddTransient<AuthService>();
 
 var app = builder.Build();
 
-using (var scope  = app.Services.CreateScope()) {
-  var dbContext = scope.ServiceProvider.GetRequiredService<Db>();
-  dbContext.Database.Migrate();
-}
+// using (var scope  = app.Services.CreateScope()) {
+//   var dbContext = scope.ServiceProvider.GetRequiredService<DbService>();
+//   dbContext.Database.Migrate();
+// }
 
 app.UseStaticFiles();
 

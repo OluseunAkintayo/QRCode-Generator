@@ -10,7 +10,7 @@ using QRC.Services;
 
 namespace QRC.Migrations
 {
-    [DbContext(typeof(Db))]
+    [DbContext(typeof(DbService))]
     [Migration("20240905132706_Initial")]
     partial class Initial
     {

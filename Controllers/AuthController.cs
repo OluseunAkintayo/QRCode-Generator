@@ -5,7 +5,7 @@ using QRC.Models;
 namespace QRC.Controllers;
 
 [ApiController]
-[Route("auth")]
+[Route("api/auth")]
 public class AuthController : ControllerBase {
 	private readonly AuthService authService;
   private readonly ILogger<AuthController> logger;

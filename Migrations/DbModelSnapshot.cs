@@ -9,7 +9,7 @@ using QRC.Services;
 
 namespace QRC.Migrations
 {
-    [DbContext(typeof(Db))]
+    [DbContext(typeof(DbService))]
     partial class DbModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

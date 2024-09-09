@@ -6,10 +6,10 @@ using QRC.Models.QRCodeModel;
 namespace QRC.Services;
 
 public class QrService {
-  private readonly Db db;
+  private readonly DbService db;
   private readonly IHttpContextAccessor httpContextAccessor;
   private readonly IWebHostEnvironment webHostEnvironment;
-  public QrService(Db _db, IHttpContextAccessor _httpContextAccessor, IWebHostEnvironment _iwebHostEnvironment){
+  public QrService(DbService _db, IHttpContextAccessor _httpContextAccessor, IWebHostEnvironment _iwebHostEnvironment){
     db = _db;
     httpContextAccessor = _httpContextAccessor;
     webHostEnvironment = _iwebHostEnvironment;
@@ -66,7 +66,7 @@ public class QrService {
 
   public QrCodeListResponse GetQrCodes() {
     QrCodeListResponse response = new();
-    var codes = db.QrCodes.ToList();
+    var codes = db.QrCodes.OrderByDescending(item => item.CreatedAt).ToList();
     if(codes == null) {
       response.Success = false;
       response.Message = "Error retrieving items";
@@ -127,7 +127,7 @@ public class QrService {
       return null;
     };
     var claims = identity.Claims;
-    string UserId = claims.FirstOrDefault(u => u.Type == "UserId")?.Value;
+    string? UserId = claims.FirstOrDefault(u => u.Type == "UserId")?.Value;
     return UserId;
   }
 }

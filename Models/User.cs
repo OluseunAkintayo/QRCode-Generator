@@ -42,6 +42,12 @@ public class LoginResponse {
 }
 
 
+public class LogoutResponse {
+  public bool Success { get; set; }
+  public string Message { get; set; } = string.Empty;
+}
+
+
 public class LoginSuccess {
   public string Email { get; set;} = string.Empty;
   public Roles Role { get; set; }

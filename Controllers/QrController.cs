@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace QRC.Controllers;
 
 [ApiController]
-[Route("qrcode")]
+[Route("api/qrcode")]
 public class QrController : ControllerBase {
 	private readonly QrService qrService;
   public QrController(QrService _qrService) {
@@ -29,8 +29,8 @@ public class QrController : ControllerBase {
   public IActionResult ScanQrCode(string Id) {
     var res = qrService.ScanQrCode(Id);
     if(!res.Success) return BadRequest(res);
-    // return Ok(res);
-    return Redirect(res.Url);
+    return Ok(res);
+    // return Redirect(res.Url);
   }
 
 

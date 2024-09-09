@@ -7,9 +7,9 @@ using QRC.Models;
 
 namespace QRC.Services;
 public class AuthService {
-  private readonly Db db;
+  private readonly DbService db;
   private readonly IConfiguration config;
-  public AuthService(Db _db, IConfiguration _config) {
+  public AuthService(DbService _db, IConfiguration _config) {
     db = _db;
     config = _config;
   }
@@ -61,6 +61,37 @@ public class AuthService {
       Exp = token.ExpirationDate
     };
     return response;
+  }
+
+  public LogoutResponse Logout(string token) {
+    var response = new LogoutResponse();
+
+    if (string.IsNullOrEmpty(token)) {
+      response.Success = false;
+      response.Message = "Token is required";
+      return response;
+    }
+
+    // Add the token to a blacklist or revocation list
+    // This could be stored in a database table or a distributed cache
+    // For simplicity, we'll use a static HashSet here
+    if (!BlacklistedTokens.Add(token)) {
+      response.Success = false;
+      response.Message = "Token has already been invalidated";
+      return response;
+    }
+
+    response.Success = true;
+    response.Message = "Logout successful";
+    return response;
+  }
+
+  // Static HashSet to store blacklisted tokens
+  private static HashSet<string> BlacklistedTokens = new HashSet<string>();
+
+  // Method to check if a token is blacklisted
+  public bool IsTokenBlacklisted(string token) {
+    return BlacklistedTokens.Contains(token);
   }
 
   private TokenResponse CreateToken(User user){
