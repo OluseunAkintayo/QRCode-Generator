@@ -9,6 +9,19 @@ using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
+string[] allowedLocations = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string[]>()!;
+// builder.Services.AddCors(options => {
+//   options.AddPolicy("AllowedOrigins", policy => {
+//     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+//   });
+// });
+
+builder.Services.AddCors(options => {
+  options.AddPolicy("AllowedOrigins", policy => {
+    policy.WithOrigins(allowedLocations).AllowAnyHeader().AllowAnyMethod();
+  });
+});
+
 // Add services to the container.
 
 Log.Logger = new LoggerConfiguration()
@@ -51,25 +64,13 @@ builder.Services.AddAuthentication(auth => {
   };
 });
 
-// string[] allowedLocations = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string[]>()!;
-builder.Services.AddCors(options => {
-  options.AddPolicy("AllowedOrigins", policy => {
-    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-  });
-});
-
-// builder.Services.AddCors(options => {
-//   options.AddPolicy("AllowedOrigins", policy => {
-//     policy.WithOrigins(allowedLocations).AllowAnyHeader().AllowAnyMethod();
-//   });
-// });
-
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<DbService>();
 builder.Services.AddTransient<QrService>();
 builder.Services.AddTransient<AuthService>();
 
 var app = builder.Build();
+app.UseCors("AllowedOrigins");
 
 // using (var scope  = app.Services.CreateScope()) {
 //   var dbContext = scope.ServiceProvider.GetRequiredService<DbService>();
@@ -84,7 +85,6 @@ app.UseStaticFiles();
   app.UseSwaggerUI();
 // }
 
-app.UseCors("AllowedOrigins");
 
 app.UseHttpsRedirection();
 
