@@ -17,7 +17,6 @@ Log.Logger = new LoggerConfiguration()
                 .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -52,12 +51,18 @@ builder.Services.AddAuthentication(auth => {
   };
 });
 
-string[] allowedLocations = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string[]>()!;
+// string[] allowedLocations = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string[]>()!;
 builder.Services.AddCors(options => {
-  options.AddPolicy("AllowLocalOrigin", policy => {
-    policy.WithOrigins(allowedLocations).AllowAnyHeader().AllowAnyMethod();
+  options.AddPolicy("AllowedOrigins", policy => {
+    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
   });
 });
+
+// builder.Services.AddCors(options => {
+//   options.AddPolicy("AllowedOrigins", policy => {
+//     policy.WithOrigins(allowedLocations).AllowAnyHeader().AllowAnyMethod();
+//   });
+// });
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<DbService>();
@@ -79,7 +84,7 @@ app.UseStaticFiles();
   app.UseSwaggerUI();
 // }
 
-app.UseCors("AllowLocalOrigin");
+app.UseCors("AllowedOrigins");
 
 app.UseHttpsRedirection();
 
