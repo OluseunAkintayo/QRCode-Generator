@@ -30,7 +30,6 @@ public class QrController : ControllerBase {
     var res = qrService.ScanQrCode(Id);
     if(!res.Success) return BadRequest(res);
     return Ok(res);
-    // return Redirect(res.Url);
   }
 
 
@@ -42,16 +41,16 @@ public class QrController : ControllerBase {
     return Ok(res);
   }
   
-  [HttpGet("list", Name = "GetQrCodes")]
+  [HttpGet("list", Name = "GetQrCodes"), Authorize]
   [ProducesResponseType(StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
   public IActionResult GetQrCodes() {
-    var res = qrService.GetQrCodes();
+    var res = qrService.ListQrCodes();
     if (!res.Success) return BadRequest(res);
     return Ok(res);
   }
 
-  [HttpDelete(Name = "DeleteQrCode"), Authorize(Roles = "Admin")]
+  [HttpDelete(Name = "DeleteQrCode"), Authorize]
   [ProducesResponseType(StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
   public IActionResult DeleteQrCode(Guid Id) {

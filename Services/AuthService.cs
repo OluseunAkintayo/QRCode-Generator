@@ -102,7 +102,7 @@ public class AuthService {
       new(ClaimTypes.Email, user.Email),
       new(ClaimTypes.Role, user.Role.ToString())
     };
-    DateTime exp = DateTime.Now.AddMinutes(15);
+    DateTime exp = DateTime.Now.AddHours(2);
     var token = new JwtSecurityToken(
       config["Jwt:Issuer"],
       config["Jwt:Audience"],

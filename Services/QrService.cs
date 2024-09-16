@@ -9,10 +9,12 @@ public class QrService {
   private readonly DbService db;
   private readonly IHttpContextAccessor httpContextAccessor;
   private readonly IWebHostEnvironment webHostEnvironment;
-  public QrService(DbService _db, IHttpContextAccessor _httpContextAccessor, IWebHostEnvironment _iwebHostEnvironment){
+  private readonly IConfiguration config;
+  public QrService(DbService _db, IHttpContextAccessor _httpContextAccessor, IWebHostEnvironment _iwebHostEnvironment, IConfiguration _config){
     db = _db;
     httpContextAccessor = _httpContextAccessor;
     webHostEnvironment = _iwebHostEnvironment;
+    config = _config;
   }
 
   public QrCodeResponse NewQrCode(QrCodeDto qrCodeDto) {
@@ -25,15 +27,13 @@ public class QrService {
       return response;
     }
 
-    var request = httpContextAccessor.HttpContext?.Request;
     string id = Nanoid.Generate(Nanoid.Alphabets.LowercaseLettersAndDigits, 10);
-
     string dirPath = Path.Combine(webHostEnvironment.WebRootPath, "img/");
     if(!Path.Exists(dirPath)) Directory.CreateDirectory(dirPath);
     string partialFilePath = "img/" + Guid.NewGuid().ToString() + ".png";
     string filePath = Path.Combine(webHostEnvironment.WebRootPath, partialFilePath);
-    string url = $"https://michaelson-qr-code-generator.vercel.app/scan?url-id={id}";
-    // var imgFormat = Base64QRCode.ImageType.Png;
+    var clientUrl = config.GetConnectionString("ClientUrl");
+    string url = $"{clientUrl}scan?url-id={id}";
     QRCodeGenerator qRCodeGenerator = new();
     QRCodeData qrCodeData = qRCodeGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
     Base64QRCode base64QRCode = new(qrCodeData);
@@ -42,8 +42,6 @@ public class QrService {
     byte[] imgBytes = Convert.FromBase64String(qrCodeImage);
     File.WriteAllBytes(filePath, imgBytes);
     
-    // string imgUrl = $"data:image/{imgFormat.ToString().ToLower()};base64,{qrCodeImage}";
-    string fileUri = $"{request?.Scheme}://{request?.Host}/{partialFilePath}";
     QrCodeModel qrCode = new() {
       Title = qrCodeDto.Title,
       VisitCount = 0,
@@ -52,7 +50,7 @@ public class QrService {
       SiteUrl = qrCodeDto.SiteUrl,
       UrlId = id,
       CreatedBy = Guid.Parse(user),
-      ImageUrl = fileUri
+      ImageUrl = partialFilePath
     };
 
     db.QrCodes.Add(qrCode);
@@ -64,9 +62,29 @@ public class QrService {
     return response;
   }
 
-  public QrCodeListResponse GetQrCodes() {
+  public QrCodeListResponse ListQrCodes() {
+    var user = GetCurrentUser();
     QrCodeListResponse response = new();
-    var codes = db.QrCodes.OrderByDescending(item => item.CreatedAt).ToList();
+    if(user == null) {
+      response.Success = false;
+      response.Message = "User cannot be null";
+      return response;
+    }
+
+    var request = httpContextAccessor.HttpContext?.Request;
+    var clientUrl = config.GetConnectionString("ClientUrl");
+    var codes = (from qrcode in db.QrCodes select new QrCodeModel() {
+      Id = qrcode.Id,
+      Title = qrcode.Title,
+      IsActive = qrcode.IsActive,
+      UrlId = qrcode.UrlId,
+      ImageUrl = $"{request!.Scheme}://{request.Host}/{qrcode.ImageUrl}",
+      SiteUrl = qrcode.SiteUrl,
+      CreatedAt = qrcode.CreatedAt,
+      CreatedBy = qrcode.CreatedBy,
+      VisitCount = qrcode.VisitCount
+    }).Where(item => item.CreatedBy == Guid.Parse(user)).ToList();
+
     if(codes == null) {
       response.Success = false;
       response.Message = "Error retrieving items";
@@ -94,7 +112,7 @@ public class QrService {
       return response;
     }
 
-    code.VisitCount = code.VisitCount + 1;
+    code.VisitCount++;
     db.SaveChanges();
 
     response.Success = true;

@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QRC.Services;
 
@@ -11,11 +10,9 @@ using QRC.Services;
 namespace QRC.Migrations
 {
     [DbContext(typeof(DbService))]
-    [Migration("20240905132706_Initial")]
-    partial class Initial
+    partial class DbServiceModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.17");
@@ -62,7 +59,7 @@ namespace QRC.Migrations
                     b.HasIndex("UrlId")
                         .IsUnique();
 
-                    b.ToTable("QrCodes");
+                    b.ToTable("QrCodes", (string)null);
                 });
 
             modelBuilder.Entity("QRC.Models.User", b =>
@@ -96,7 +93,7 @@ namespace QRC.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 #pragma warning restore 612, 618
         }

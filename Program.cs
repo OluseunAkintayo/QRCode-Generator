@@ -12,10 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.Information()
-                    .WriteTo.Console()
-                    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
-                    .CreateLogger();
+                .MinimumLevel.Information()
+                .WriteTo.Console()
+                .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
 
 
 builder.Services.AddControllers();
