@@ -42,7 +42,7 @@ public class AuthService {
     var user = db.Users.FirstOrDefault(item => item.Email == userLogin.Email);
     if(user == null) {
       response.Success = false;
-      response.Message = "User not found";
+      response.Message = "Invalid username or password";
       return response;
     }
 
@@ -63,36 +63,37 @@ public class AuthService {
     return response;
   }
 
-  public LogoutResponse Logout(string token) {
-    var response = new LogoutResponse();
+  // logout controller to be implemented
+  // public LogoutResponse Logout(string token) {
+  //   var response = new LogoutResponse();
 
-    if (string.IsNullOrEmpty(token)) {
-      response.Success = false;
-      response.Message = "Token is required";
-      return response;
-    }
+  //   if (string.IsNullOrEmpty(token)) {
+  //     response.Success = false;
+  //     response.Message = "Token is required";
+  //     return response;
+  //   }
 
-    // Add the token to a blacklist or revocation list
-    // This could be stored in a database table or a distributed cache
-    // For simplicity, we'll use a static HashSet here
-    if (!BlacklistedTokens.Add(token)) {
-      response.Success = false;
-      response.Message = "Token has already been invalidated";
-      return response;
-    }
+  //   // Add the token to a blacklist or revocation list
+  //   // This could be stored in a database table or a distributed cache
+  //   // For simplicity, we'll use a static HashSet here
+  //   if (!BlacklistedTokens.Add(token)) {
+  //     response.Success = false;
+  //     response.Message = "Token has already been invalidated";
+  //     return response;
+  //   }
 
-    response.Success = true;
-    response.Message = "Logout successful";
-    return response;
-  }
+  //   response.Success = true;
+  //   response.Message = "Logout successful";
+  //   return response;
+  // }
 
-  // Static HashSet to store blacklisted tokens
-  private static HashSet<string> BlacklistedTokens = new HashSet<string>();
+  // // Static HashSet to store blacklisted tokens
+  // private static HashSet<string> BlacklistedTokens = new HashSet<string>();
 
-  // Method to check if a token is blacklisted
-  public bool IsTokenBlacklisted(string token) {
-    return BlacklistedTokens.Contains(token);
-  }
+  // // Method to check if a token is blacklisted
+  // public bool IsTokenBlacklisted(string token) {
+  //   return BlacklistedTokens.Contains(token);
+  // }
 
   private TokenResponse CreateToken(User user){
     var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));

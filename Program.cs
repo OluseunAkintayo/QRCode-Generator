@@ -10,11 +10,6 @@ using Swashbuckle.AspNetCore.Filters;
 var builder = WebApplication.CreateBuilder(args);
 
 string[] allowedLocations = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string[]>()!;
-// builder.Services.AddCors(options => {
-//   options.AddPolicy("AllowedOrigins", policy => {
-//     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-//   });
-// });
 
 builder.Services.AddCors(options => {
   options.AddPolicy("AllowedOrigins", policy => {
@@ -35,15 +30,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DbService>(options => {
-  options.UseSqlite(builder.Configuration.GetConnectionString("Nexus"));
+  options.UseMySql(
+    builder.Configuration.GetConnectionString("Sql"),
+    ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Sql"))
+  );
 });
 
 builder.Services.AddSwaggerGen(options => {
   options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme {
     In  = ParameterLocation.Header,
     Name = "Authorization",
-    Type = SecuritySchemeType.ApiKey,
-    Description = "Bearer [token]"
+    Type = SecuritySchemeType.ApiKey
   });
   options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
@@ -70,12 +67,8 @@ builder.Services.AddTransient<QrService>();
 builder.Services.AddTransient<AuthService>();
 
 var app = builder.Build();
-app.UseCors("AllowedOrigins");
 
-// using (var scope  = app.Services.CreateScope()) {
-//   var dbContext = scope.ServiceProvider.GetRequiredService<DbService>();
-//   dbContext.Database.Migrate();
-// }
+app.UseCors("AllowedOrigins");
 
 app.UseStaticFiles();
 
